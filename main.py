@@ -63,3 +63,15 @@ async def get_command_by_name(name: str):
 def add_command(command: Command) -> Command:
     command_list.append(dict(command))
     return command
+
+
+@app.delete("/commands/delete/{name}")
+def delete_command_by_name(name: str):
+    delete_count = 0
+    for command in command_list:
+        if command["command_name"] == name:
+            command_list.remove(command)
+            delete_count += 1
+            return f"Command with name {name} was removed from command_list !"
+    if delete_count == 0:
+        return f"Command with name {name} not found!"
