@@ -59,6 +59,20 @@ async def get_command_by_name(name: str):
     return searched_command
 
 
+@app.get("/commads/home_stadium/{name}")
+async def get_home_stadium_by_name(name: str):
+    home_stadium: int = 0
+    for command in command_list:
+        if command["command_name"] == name:
+            home_stadium += 1
+            return {
+                "command_name": command["command_name"],
+                "command_home_stadium": command["command_home_stadium"],
+            }
+    if home_stadium < 1:
+        return f"Command with name {name} not found!"
+
+
 @app.post("/commands/add", response_model=Command)
 def add_command(command: Command) -> Command:
     command_list.append(dict(command))
