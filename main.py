@@ -73,6 +73,20 @@ async def get_home_stadium_by_name(name: str):
         return f"Command with name {name} not found!"
 
 
+@app.get("/commands/foundation_year/{name}")
+async def get_foundation_year(name: str):
+    foundation_year_count: int = 0
+    for command in command_list:
+        if command["command_name"] == name:
+            foundation_year_count += 1
+            return {
+                "command_name": command["command_name"],
+                "command_foundation_year": command["command_year_of_foundation"],
+            }
+    if foundation_year_count < 1:
+        return f"Command with name {name} not found!"
+
+
 @app.post("/commands/add", response_model=Command)
 def add_command(command: Command) -> Command:
     command_list.append(dict(command))
