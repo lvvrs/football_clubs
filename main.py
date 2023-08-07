@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import Union
 
 app = FastAPI()
 
@@ -10,6 +11,7 @@ class Command(BaseModel):
     command_country: str = "Russia"
     command_year_of_foundation: int
     command_home_stadium: str
+    command_coach: str
 
 
 command_list = [
@@ -18,21 +20,24 @@ command_list = [
         "command_city": "Moscow",
         "command_country": "Russia",
         "command_year_of_foundation": 1922,
-        "command_home_stadium": "Otkritie bank Arena"
+        "command_home_stadium": "Otkritie bank Arena",
+        "command_coach": "Gilermo Abaskal"
     },
     {
         "command_name": "Dinamo",
         "command_city": "Moscow",
         "command_country": "Russia",
         "command_year_of_foundation": 1923,
-        "command_home_stadium": "Dinamo"
+        "command_home_stadium": "Dinamo",
+        "command_coach": "Slavisha Yokanovich"
     },
     {
         "command_name": "CSKA",
         "command_city": "Moscow",
         "command_country": "Russia",
         "command_year_of_foundation": 1911,
-        "command_home_stadium": "VEB Arena"
+        "command_home_stadium": "VEB Arena",
+        "command_coach": "Vladimir Fedotov"
     }
 ]
 
@@ -84,6 +89,20 @@ async def get_foundation_year(name: str):
                 "command_foundation_year": command["command_year_of_foundation"],
             }
     if foundation_year_count < 1:
+        return f"Command with name {name} not found!"
+
+
+@app.get("/commands/coach/{name}")
+async def get_coach_by_name(name: str) -> Union[dict, str]:
+    coach_count: int = 0
+    for command in command_list:
+        if command["command_name"] == name:
+            coach_count += 1
+            return {
+                "command_name": command["command_name"],
+                "command_coach": command["command_coach"]
+            }
+    if coach_count < 1:
         return f"Command with name {name} not found!"
 
 
