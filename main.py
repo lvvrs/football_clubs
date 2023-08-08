@@ -106,6 +106,24 @@ async def get_coach_by_name(name: str) -> Union[dict, str]:
         return f"Command with name {name} not found!"
 
 
+@app.get("/commands/city/{city}")
+async def get_commands_by_city(city_name: str) -> Union[list, str]:
+    command_list_by_city: list = []
+    commands_count: int = 0
+    for command in command_list:
+        if command["command_city"] == city_name:
+            commands_count += 1
+            searched_command_dict = {
+                "command_name": command["command_name"],
+                "command_city": command["command_city"]
+            }
+            command_list_by_city.append(searched_command_dict)
+    if len(command_list_by_city) > 0:
+        return command_list_by_city
+    else:
+        return f"Commands from {city_name} not found!"
+
+
 @app.post("/commands/add", response_model=Command)
 def add_command(command: Command) -> Command:
     command_list.append(dict(command))
