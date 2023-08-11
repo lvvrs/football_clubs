@@ -140,3 +140,13 @@ def delete_command_by_name(name: str):
             return f"Command with name {name} was removed from command_list !"
     if delete_count == 0:
         return f"Command with name {name} not found!"
+
+
+@app.put("/commands/change/{name}")
+def change_command_information(name: str, command_update: dict):
+    for command in command_list:
+        if command["command_name"] == name:
+            command_list.remove(command)
+    command_list.append(command_update)
+    return command_update
+
