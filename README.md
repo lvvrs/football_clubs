@@ -8,3 +8,5 @@ Repository for study project on python
     3) SQL Alchemy for work with DB
     4) Pydantic for data models
     5) Docker for run Application
+    6) Httpx for client Application (Using with Pytest)
+    7) Pytest for unit tests Application
