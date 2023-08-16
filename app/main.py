@@ -107,11 +107,11 @@ async def get_coach_by_name(name: str) -> Union[dict, str]:
 
 
 @app.get("/commands/city/{city}")
-async def get_commands_by_city(city_name: str) -> Union[list, str]:
+async def get_commands_by_city(city: str) -> Union[list, str]:
     command_list_by_city: list = []
     commands_count: int = 0
     for command in command_list:
-        if command["command_city"] == city_name:
+        if command["command_city"] == city:
             commands_count += 1
             searched_command_dict = {
                 "command_name": command["command_name"],
@@ -121,7 +121,7 @@ async def get_commands_by_city(city_name: str) -> Union[list, str]:
     if len(command_list_by_city) > 0:
         return command_list_by_city
     else:
-        return f"Commands from {city_name} not found!"
+        return f"Commands from {city} not found!"
 
 
 @app.post("/commands/add", response_model=Command)
@@ -142,11 +142,11 @@ def delete_command_by_name(name: str):
         return f"Command with name {name} not found!"
 
 
-@app.put("/commands/change/{name}")
-def change_command_information(name: str, command_update: dict):
+@app.put("/commands/change/{name}", response_model=Command)
+def change_command_information(name: str, command_update: Command) -> Command:
     for command in command_list:
         if command["command_name"] == name:
             command_list.remove(command)
-    command_list.append(command_update)
+    command_list.append(dict(command_update))
     return command_update
 
