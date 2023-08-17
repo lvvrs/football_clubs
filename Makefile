@@ -8,3 +8,6 @@ run_app:
 unit_tests:
 				pytest
 
+# Work only run in virtualenv (make freeze) only in command line
+freeze:
+				pip freeze > requirements.txt
