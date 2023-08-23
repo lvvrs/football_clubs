@@ -18,7 +18,7 @@ docker_build:
 
 # Work with Pycharm make plugin
 docker_run:
-				docker run -d --name footbool_clubs_app -p 80:80 football_clubs
+				docker run -d --name football_clubs_app -p 80:80 football_clubs
 
 # Work with Pycharm make plugin
 docker_status:
@@ -26,11 +26,11 @@ docker_status:
 
 # Work with Pycharm make plugin
 docker_logs:
-				docker logs footbool_clubs_app
+				docker logs football_clubs_app
 
 # Work with Pycharm make plugin
 docker_down:
-				docker stop footbool_clubs_app && docker rm footbool_clubs_app
+				docker stop football_clubs_app && docker rm football_clubs_app
 
 # Work with Pycharm make plugin
 docker_build_run: docker_build docker_run
@@ -40,3 +40,37 @@ docker_status_logs: docker_status docker_logs
 
 # Work with Pycharm make plugin
 docker_build_run_status: docker_build_run docker_status
+
+# Work with Pycharm make plugin
+docker_tag:
+				echo Input Repository_name and image_tag.
+				echo Example: \"repo_name 1.0.0\"
+				read REPO_NAME IMAGE_TAG; docker tag football_clubs:latest $$REPO_NAME/football_clubs:$$IMAGE_TAG
+
+# Work with Pycharm make plugin
+docker_login:
+				echo Input Docker_REPO_Username and Docker_Repo_Password.
+				echo Example: \"docker_user docker_password\"
+				read REPO_USER REPO_PASSWORD; docker login -u $$REPO_USER -p $$REPO_PASSWORD
+
+# Work with Pycharm make plugin
+docker_push:
+				echo Input Repository_name and image_tag.
+				echo Example: \"repo_name 1.0.0\"
+				read REPO_NAME IMAGE_TAG; docker push $$REPO_NAME/football_clubs:$$IMAGE_TAG
+
+# Work with Pycharm make plugin
+docker_rmi:
+				echo Input Repository_name and image_tag.
+				echo Example: \"repo_name 1.0.0\"
+				read REPO_NAME IMAGE_TAG; docker rmi $$REPO_NAME/football_clubs:$$IMAGE_TAG
+
+# Work with Pycharm make plugin
+docker_pull:
+				echo Input Repository_name and image_tag.
+				echo Example: \"repo_name 1.0.0\"
+				read REPO_NAME IMAGE_TAG; docker pull $$REPO_NAME/football_clubs:$$IMAGE_TAG
+
+# Work with Pycharm make plugin
+docker_list_images:
+				docker images | grep football_clubs
