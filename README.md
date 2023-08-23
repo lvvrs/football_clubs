@@ -33,3 +33,9 @@ The project contains a Makefile with commands to perform actions.
     6) docker_build_run - consists of commands: docker_build and docker_run
     7) docker_status_logs - consists of commands: docker_status and docker_logs
     8) docker_build_run_status - consists of commands: docker_build_run and docker_status
+    9) docker_tag - set repository and tag for image
+    10) docker_login - login to dockerhub
+    11) docker_push - push image to dockerhub
+    12) docker_rmi - untagged or remove image
+    13) docker_pull - pull image from docker hub
+    14) docker_list_images - list docker images on local pc
