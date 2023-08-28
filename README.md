@@ -39,3 +39,19 @@ The project contains a Makefile with commands to perform actions.
     12) docker_rmi - untagged or remove image
     13) docker_pull - pull image from docker hub
     14) docker_list_images - list docker images on local pc
+
+## Run Application with Docker
+Application run in docker container.
+Docker container available on dockerhub: 
+https://hub.docker.com/repository/docker/skay1989/football_clubs/general
+
+#### Command for run application:
+
+    docker run -d --name football_clubs_app --env UVICORN_PORT=8080 -p 8080:8080 football_clubs
+
+#### Environment variables:
+
+    UVICORN_PORT - set http port for application (default 80)
+    UVICORN_HOST - set host for application (default 0.0.0.0)
+
+    
