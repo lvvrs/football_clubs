@@ -18,7 +18,7 @@ docker_build:
 
 # Work with Pycharm make plugin
 docker_run:
-				docker run -d --name football_clubs_app -p 80:80 football_clubs
+				docker run -d --name football_clubs_app --env UVICORN_PORT=8080 -p 8080:8080 football_clubs
 
 # Work with Pycharm make plugin
 docker_status:
