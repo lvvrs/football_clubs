@@ -74,3 +74,16 @@ docker_pull:
 # Work with Pycharm make plugin
 docker_list_images:
 				docker images | grep football_clubs
+
+# Work with Pycharm make plugin
+docker_compose_build:
+				docker-compose build
+
+# Work with Pycharm make plugin
+docker_compose_up: docker_compose_build
+				docker-compose up -d football_clubs_app
+
+# Work with Pycharm make plugin
+docker_compose_down:
+				docker-compose down --remove-orphans
+
