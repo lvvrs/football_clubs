@@ -1,0 +1,10 @@
+[http]
+  [http.routers.app-router]
+    entryPoints = ["http"]
+    rule = "PathPrefix(`/`)"
+    service = "service-app"
+  [http.services]
+    [http.services.service-app]
+      [http.services.service-app.loadBalancer]
+        [[http.services.service-app.loadBalancer.servers]]
+          url = "http://football_clubs_app:8090"

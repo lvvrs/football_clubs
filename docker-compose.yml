@@ -2,16 +2,32 @@ version: "3"
 
 services:
   football_clubs_app:
+    container_name: football_clubs_app
+    hostname: football-clubs-app
     build:
       context: .
       dockerfile: Dockerfile
     image: football_clubs
     environment:
-      - UVICORN_PORT=8080
+      - UVICORN_PORT=8090
     networks:
       - football_clubs_network
     ports:
+      - "8090:8090"
+  traefik_proxy:
+    container_name: traefik_proxy
+    hostname: traefik-proxy
+    depends_on:
+      - football_clubs_app
+    image: traefik
+    networks:
+      - football_clubs_network
+    ports:
+      - "9090:9090"
       - "8080:8080"
+    volumes:
+      - ./infra/traefik_proxy_config/traefik.toml:/etc/traefik/traefik.toml
+      - ./infra/traefik_proxy_config/routes.toml:/etc/traefik/routes.toml
 
 networks:
   football_clubs_network:
