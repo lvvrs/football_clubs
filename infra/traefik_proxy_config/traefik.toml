@@ -1,0 +1,11 @@
+[entryPoints]
+  [entryPoints.http]
+    address = ":9090"
+
+[providers]
+  [providers.file]
+    filename = "/etc/traefik/routes.toml"
+
+[api]
+  dashboard = true
+  insecure = true
