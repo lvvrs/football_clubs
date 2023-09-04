@@ -1,8 +1,12 @@
 [http]
+  [http.middlewares]
+    [http.middlewares.api-stripprefix.stripPrefix]
+      prefixes = ["/docs", "/redoc"]
   [http.routers.app-router]
     entryPoints = ["http"]
     rule = "PathPrefix(`/`)"
     service = "service-app"
+    middlewares = ["api-stripprefix"]
   [http.services]
     [http.services.service-app]
       [http.services.service-app.loadBalancer]

@@ -13,6 +13,7 @@ Repository for study project on python
     8) Make and Makefile
     9) Httpx for TestClient in unittest's for Pytest
     10) Docker-Compose for run Application and additional containers
+    11) TraefikProxy for emulate production work application behinde reverse proxy
 
 
 ## Makefile
@@ -42,7 +43,8 @@ The project contains a Makefile with commands to perform actions.
     14) docker_list_images - list docker images on local pc
     15) docker_compose_build - build image with docker-compose
     16) docker_compose_up - run appication with docker compose, create network, depends on docker_compose_build
-    17) docker_compose_down - stop and delete application container with docker-compose
+    17) docker_compose_up_with_traefik_proxy - run appication and traefik proxy with docker compose, create network, depends on docker_compose_build
+    18) docker_compose_down - stop and delete application container with docker-compose
 
 ## Run Application with Docker
 Application run in docker container.
@@ -57,5 +59,22 @@ https://hub.docker.com/repository/docker/skay1989/football_clubs/general
 
     UVICORN_PORT - set http port for application (default 80)
     UVICORN_HOST - set host for application (default 0.0.0.0)
+
+### Run Application with Docker-Compose
+Application run with docker-compose in 2 modes:
+
+    1) Without reverse proxy - docker_compose_up in Makefile
+    2) With reverse proxy - docker_compose_up_with_traefik_proxy in Makefile
+
+Traefik was chosen as a reverse proxy (Traefik Proxy)
+
+### Traefik Proxy
+Configuration for Traefik Proxy store in directory: infra/traefik_proxy_config.
+Configuration files:
+
+    1) traefik.toml - contain main settings
+    2) routes.toml - contain routes settings
+
+
 
     

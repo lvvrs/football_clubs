@@ -81,6 +81,10 @@ docker_compose_build:
 
 # Work with Pycharm make plugin
 docker_compose_up: docker_compose_build
+				docker-compose up -d football_clubs_app
+
+# Work with Pycharm make plugin
+docker_compose_up_with_traefik_proxy: docker_compose_build
 				docker-compose up -d football_clubs_app traefik_proxy
 
 # Work with Pycharm make plugin
