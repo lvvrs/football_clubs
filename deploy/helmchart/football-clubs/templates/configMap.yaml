@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-env-cm
+  namespace: {{ .Values.systemNamespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    {{- include "football_clubs.default_labels" . | indent 4 }}
+data:
+  UVICORN_PORT: "{{ .Values.appHttpPort }}"
+  

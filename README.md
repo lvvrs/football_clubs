@@ -14,6 +14,8 @@ Repository for study project on python
     9) Httpx for TestClient in unittest's for Pytest
     10) Docker-Compose for run Application and additional containers
     11) TraefikProxy for emulate production work application behinde reverse proxy
+    12) Kubernetes for run and orchestrating Application
+    13) Helm for install Aplication on Kubernetes
 
 
 ## Makefile
@@ -45,6 +47,8 @@ The project contains a Makefile with commands to perform actions.
     16) docker_compose_up - run appication with docker compose, create network, depends on docker_compose_build
     17) docker_compose_up_with_traefik_proxy - run appication and traefik proxy with docker compose, create network, depends on docker_compose_build
     18) docker_compose_down - stop and delete application container with docker-compose
+    19) kubernetes_helm_install - install helm chart with application on local kubernetes
+    20) kubernetes_helm_uninstall - uninstall helm chart with application from local kubernetes
 
 ## Run Application with Docker
 Application run in docker container.
@@ -75,6 +79,18 @@ Configuration files:
     1) traefik.toml - contain main settings
     2) routes.toml - contain routes settings
 
+### Run Application with Helm on local Kubernetes cluster
+Application may be install on local single node Kubernetes cluster.
+Example: Docker Desktop with enable Kubernetes.
+Install on Kubernetes using helm chart. Helm chart is located along the way: deploy/helmchart/football-clubs
 
+#### Command for install application with helm chart:
+
+    Install (kubernetes_helm_install in Mafegile):
+        kubectl create ns football-clubs-ns
+        helm upgrade --install football-clubs deploy/helmchart/football-clubs
+
+    Uninstall (kubernetes_helm_uninstall in Makefile):
+        kubectl delete ns football-clubs-ns
 
     

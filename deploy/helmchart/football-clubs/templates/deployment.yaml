@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-deploy
+  namespace: {{ .Values.systemNamespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    {{- include "football_clubs.default_labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.appReplicasCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      name: {{ .Chart.Name }}
+      labels:
+        app: {{ .Chart.Name }}
+        {{- include "football_clubs.default_labels" . | indent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-app
+          image: "{{ .Values.systemRegistry }}/{{ .Values.systemContainerName }}:{{ .Chart.AppVersion}}"
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-env-cm
+          ports:
+            - containerPort: {{ .Values.appHttpPort }}
+              protocol: TCP
+          resources:
+            {{- include "football_clubs.application_resources" . | indent 12 }}
+      restartPolicy: Always
+      

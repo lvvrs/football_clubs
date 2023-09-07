@@ -1,0 +1,10 @@
+---
+apiVersion: v2
+name: football-clubs
+version: 0.0.1
+description: Chart for deploy application football_clubs on Kubernetes
+home: https://github.com/lvvrs/football_clubs
+sources:
+  - https://github.com/lvvrs/football_clubs
+  - https://hub.docker.com/repository/docker/skay1989/football_clubs/general
+appVersion: 0.0.2
