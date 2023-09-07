@@ -1,0 +1,12 @@
+---
+systemNamespace: football-clubs-ns
+systemRegistry: skay1989
+systemContainerName: football_clubs
+
+appReplicasCount: 2
+appHttpPort: 8090
+appResources:
+  requestsCpu: 200m
+  requestsMemory: 256Mi
+  limitsCpu: 400m
+  limitsMemory: 512Mi

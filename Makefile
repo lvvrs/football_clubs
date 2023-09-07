@@ -91,3 +91,13 @@ docker_compose_up_with_traefik_proxy: docker_compose_build
 docker_compose_down:
 				docker-compose down --remove-orphans
 
+# Work with Pycharm make plugin
+kubernetes_helm_install:
+				kubectl create ns football-clubs-ns
+				helm upgrade --install football-clubs deploy/helmchart/football-clubs
+
+# Work with Pycharm make plugin
+kubernetes_helm_uninstall:
+				kubectl delete ns football-clubs-ns
+
+
