@@ -94,7 +94,7 @@ docker_compose_down:
 # Work with Pycharm make plugin
 kubernetes_helm_install:
 				kubectl create ns football-clubs-ns
-				helm upgrade --install football-clubs deploy/helmchart/football-clubs
+				helm upgrade --install football-clubs deploy/helmchart/football-clubs -n football-clubs-ns
 
 # Work with Pycharm make plugin
 kubernetes_helm_uninstall:
