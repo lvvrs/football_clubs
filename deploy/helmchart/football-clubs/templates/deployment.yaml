@@ -19,6 +19,12 @@ spec:
         app: {{ .Chart.Name }}
         {{- include "football_clubs.default_labels" . | indent 8 }}
     spec:
+      {{- if .Values.traefikSidecarEnabled }}
+      volumes:
+        - name: {{ .Chart.Name }}-traefik-cm-volume
+          configMap:
+            name: {{ .Chart.Name }}-traefik-cm
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}-app
           image: "{{ .Values.systemRegistry }}/{{ .Values.systemContainerName }}:{{ .Chart.AppVersion}}"
@@ -27,9 +33,22 @@ spec:
             - configMapRef:
                 name: {{ .Chart.Name }}-env-cm
           ports:
+            {{- if eq .Values.traefikSidecarEnabled false }}
             - containerPort: {{ .Values.appHttpPort }}
               protocol: TCP
+            {{- end }}
           resources:
             {{- include "football_clubs.application_resources" . | indent 12 }}
+        {{- if .Values.traefikSidecarEnabled }}
+        - name: {{ .Chart.Name }}-traefik-proxy
+          image: "{{ .Values.traefikSidecarImageName }}:{{ .Values.traefikSidecarImageTag }}"
+          ports:
+            - containerPort: {{ .Values.traefikSidecarAppHttpPort }}
+              protocol: TCP
+          resources:
+            {{- include "football_clubs.traefik_sidecar_resources" . | indent 12 }}
+          volumeMounts:
+            - mountPath: {{ .Values.traefikSidecarConfigsPath }}
+              name: {{ .Chart.Name }}-traefik-cm-volume
+        {{- end }}
       restartPolicy: Always
-      

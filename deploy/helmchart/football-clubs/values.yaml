@@ -10,3 +10,16 @@ appResources:
   requestsMemory: 256Mi
   limitsCpu: 400m
   limitsMemory: 512Mi
+
+traefikSidecarEnabled: false
+traefikSidecarAppHttpPort: 9090
+traefikSidecarApiDashboardEnabled: true
+traefikSidecarApiInsecureEnabled: true
+traefikSidecarImageName: traefik
+traefikSidecarImageTag: v3.0
+traefikSidecarConfigsPath: /etc/traefik
+traefikSidecatResources:
+  requestsCpu: 200m
+  requestsMemory: 256Mi
+  limitsCpu: 400m
+  limitsMemory: 512Mi

@@ -10,8 +10,14 @@ spec:
   selector:
     app: {{ .Chart.Name }}
   ports:
+    {{- if .Values.traefikSidecarEnabled }}
+    - protocol: TCP
+      port: {{ .Values.traefikSidecarAppHttpPort }}
+      targetPort: {{ .Values.traefikSidecarAppHttpPort }}
+    {{- else }}
     - protocol: TCP
       port: {{ .Values.appHttpPort }}
       targetPort: {{ .Values.appHttpPort }}
+    {{- end }}
   type: ClusterIP
   
