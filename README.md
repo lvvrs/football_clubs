@@ -48,7 +48,8 @@ The project contains a Makefile with commands to perform actions.
     17) docker_compose_up_with_traefik_proxy - run appication and traefik proxy with docker compose, create network, depends on docker_compose_build
     18) docker_compose_down - stop and delete application container with docker-compose
     19) kubernetes_helm_install - install helm chart with application on local kubernetes
-    20) kubernetes_helm_uninstall - uninstall helm chart with application from local kubernetes
+    20) kubernetes_helm_install_traefik_sidecar - install helm chart with application and traefik proxy on local kubernetes
+    21) kubernetes_helm_uninstall - uninstall helm chart with application from local kubernetes
 
 ## Run Application with Docker
 Application run in docker container.
@@ -89,6 +90,11 @@ Install on Kubernetes using helm chart. Helm chart is located along the way: dep
     Install (kubernetes_helm_install in Mafegile):
         kubectl create ns football-clubs-ns
         helm upgrade --install football-clubs deploy/helmchart/football-clubs
+
+    Install with traefik proxy (kubernetes_helm_install_traefik_sidecar)
+        kubectl create ns football-clubs-ns
+        helm upgrade --install football-clubs deploy/helmchart/football-clubs \
+        -n football-clubs-ns --set traefikSidecarEnabled=true
 
     Uninstall (kubernetes_helm_uninstall in Makefile):
         kubectl delete ns football-clubs-ns

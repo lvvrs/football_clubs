@@ -19,7 +19,7 @@ services:
     hostname: traefik-proxy
     depends_on:
       - football_clubs_app
-    image: traefik
+    image: traefik:v3.0
     networks:
       - football_clubs_network
     ports:
