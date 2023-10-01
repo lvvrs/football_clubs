@@ -97,10 +97,19 @@ kubernetes_helm_install:
 				helm upgrade --install football-clubs deploy/helmchart/football-clubs -n football-clubs-ns
 
 # Work with Pycharm make plugin
+kubernetes_helm_install_proxy: kubernetes_helm_install
+				helm upgrade --install traefik-proxy deploy/helmchart/traefik-proxy -n football-clubs-ns
+
+# Work with Pycharm make plugin
 kubernetes_helm_install_traefik_sidecar:
 				kubectl create ns football-clubs-ns
 				helm upgrade --install football-clubs deploy/helmchart/football-clubs \
  				-n football-clubs-ns --set traefikSidecarEnabled=true
+
+# Work with Pycharm make plugin
+kubernetes_helm_install_traefik_sidecar_proxy: kubernetes_helm_install_traefik_sidecar
+				helm upgrade --install traefik-proxy deploy/helmchart/traefik-proxy \
+				-n football-clubs-ns --set proxyAppSidecarEnable=true
 
 # Work with Pycharm make plugin
 kubernetes_helm_uninstall:

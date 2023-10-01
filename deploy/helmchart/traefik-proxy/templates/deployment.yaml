@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-deploy
+  namespace: {{ .Values.systemNamespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    {{- include "traefic-proxy.default-labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.traefikReplicasCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      name: {{ .Chart.Name }}
+      labels:
+        app: {{ .Chart.Name }}
+        {{- include "traefic-proxy.default-labels" . | indent 8 }}
+    spec:
+      volumes:
+        - name: {{ .Chart.Name }}-cm-volume
+          configMap:
+            name: {{ .Chart.Name }}-cm
+      containers:
+        - name: {{ .Chart.Name }}-app
+          image: "{{ .Values.traefikImageName }}:{{ .Values.traefikImageTag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.traefikProxyPort }}
+              protocol: TCP
+          resources:
+            {{- include "traefic-proxy.container-resources" . | indent 12 }}
+          volumeMounts:
+            - mountPath: {{ .Values.traefikConfigPath }}
+              name: {{ .Chart.Name }}-cm-volume
+      restartPolicy: Always
