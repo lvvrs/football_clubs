@@ -49,9 +49,9 @@ The project contains a Makefile with commands to perform actions.
     18) docker_compose_down - stop and delete application container with docker-compose
     19) kubernetes_helm_install - install helm chart with application on local kubernetes
     20) kubernetes_helm_install_proxy - install helm chart with application on local kubernetes and helm chart with traefik proxy
-    20) kubernetes_helm_install_traefik_sidecar - install helm chart with application and traefik proxy on local kubernetes
-    21) kubernetes_helm_install_traefik_sidecar_proxy - install helm chart with application and traefik proxy on local kubernetes and helm chart with traefik proxy   
-    21) kubernetes_helm_uninstall - uninstall helm chart with application from local kubernetes
+    21) kubernetes_helm_install_traefik_sidecar - install helm chart with application and traefik proxy on local kubernetes
+    22) kubernetes_helm_install_traefik_sidecar_proxy - install helm chart with application and traefik proxy on local kubernetes and helm chart with traefik proxy   
+    23) kubernetes_helm_uninstall - uninstall helm chart with application from local kubernetes
 
 ## Run Application with Docker
 Application run in docker container.
