@@ -1,0 +1,13 @@
+---
+apiVersion: v2
+name: traefik-proxy
+version: 0.0.1
+description: Chart for deploy traefic-proxy pod fo football_clubs application on Kubernetes
+home: https://github.com/lvvrs/football_clubs
+sources:
+  - https://github.com/lvvrs/football_clubs
+  - https://hub.docker.com/repository/docker/skay1989/football_clubs/general
+  - https://traefik.io/traefik/
+  - https://github.com/traefik/traefik
+  - https://hub.docker.com/_/traefik
+appVersion: 3.0.0
