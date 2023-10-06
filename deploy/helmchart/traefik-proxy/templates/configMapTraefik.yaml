@@ -21,7 +21,7 @@ data:
       [http.services.service-app]
         [http.services.service-app.loadBalancer]
           [[http.services.service-app.loadBalancer.servers]]
-            {{- include "traefic-proxy.proxy-application-service" . | indent 12 }}
+            url = "{{ template "traefic-proxy.proxy-application-service-template" . }}"
   traefik.toml: |-
     [entryPoints]
       [entryPoints.http]

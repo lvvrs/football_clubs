@@ -21,10 +21,10 @@ limits:
 {{/*
 Define app service template
 */}}
-{{- define "traefic-proxy.proxy-application-service" }}
+{{- define "traefic-proxy.proxy-application-service-template" }}
 {{- if eq .Values.proxyAppSidecarEnable false }}
-url = "http://{{ .Values.proxyAppSrvName }}.{{ .Values.proxyAppNs }}.svc.cluster.local:{{ .Values.proxyAppPort }}"
+{{- printf "http://%s.%s.svc.cluster.local:%s" .Values.proxyAppSrvName .Values.proxyAppNs ( .Values.proxyAppPort | toString ) -}}
 {{- else }}
-url = "http://{{ .Values.proxyAppSrvName }}.{{ .Values.proxyAppNs }}.svc.cluster.local:{{ .Values.proxyAppWithSidecarPort }}"
+{{- printf "http://%s.%s.svc.cluster.local:%s" .Values.proxyAppSrvName .Values.proxyAppNs ( .Values.proxyAppWithSidecarPort | toString ) -}}
 {{- end }}
 {{- end }}

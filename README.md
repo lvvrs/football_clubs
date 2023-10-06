@@ -121,4 +121,20 @@ Install on Kubernetes using helm charts - application and traefik-proxy. Helm ch
         kubectl delete ns football-clubs-ns
     
 
+## Local Development and Testing results
+
+### Port-Forward's when install project with helm on local kubernetes without ingress controller
+
+1) When application install without traefik proxy: 
+
+        kubectl port-forward service/football-clubs-svc 8090:8090 -n football-clubs-ns
+
+2) When application install with traefik proxy sidecar:
+
+        kubectl port-forward service/football-clubs-svc 9090:9090 -n football-clubs-ns
+
+3) When application install with traefik proxy sidecar and traefik proxy application:
+
+        kubectl port-forward service/traefik-proxy-svc 9090:9090 -n football-clubs-ns
+
     
