@@ -1,118 +1,335 @@
 # Makefile for run application local and run tests
 
-# Work only run in virtualenv (make run_app) only in command line
+# Run application
 run_app:
-				uvicorn app.src.main:app --reload
+				source ./venv/bin/activate && uvicorn app.src.main:app --reload
 
-# Work only run in virtualenv (make unit_tests) only in command line
+# Run unit-test
 unit_tests:
-				pytest
+				source ./venv/bin/activate && pytest
 
-# Work only run in virtualenv (make freeze) only in command line
+# Freeze python packages (dependencies)
 freeze:
-				pip freeze > requirements.txt
+				source ./venv/bin/activate && pip freeze > requirements.txt
 
-# Work with Pycharm make plugin
+# Build docker Image
 docker_build:
 				docker build -t football_clubs .
 
-# Work with Pycharm make plugin
+# Run docker container with application
 docker_run:
 				docker run -d --name football_clubs_app --env UVICORN_PORT=8080 -p 8080:8080 football_clubs
 
-# Work with Pycharm make plugin
+# Get list of running containers
 docker_status:
 				docker ps -a
 
-# Work with Pycharm make plugin
+# Get logs from container with application
 docker_logs:
 				docker logs football_clubs_app
 
-# Work with Pycharm make plugin
+# Stop and delete docker container
 docker_down:
 				docker stop football_clubs_app && docker rm football_clubs_app
 
-# Work with Pycharm make plugin
+# Build docker image and run docker container
 docker_build_run: docker_build docker_run
 
-# Work with Pycharm make plugin
+# Get list of running containers and Get logs from container with application
 docker_status_logs: docker_status docker_logs
 
-# Work with Pycharm make plugin
+# Build docker image, run docker container and Get list of running containers
 docker_build_run_status: docker_build_run docker_status
 
-# Work with Pycharm make plugin
+# Create docker tag for image with application
 docker_tag:
 				echo Input Repository_name and image_tag.
 				echo Example: \"repo_name 1.0.0\"
 				read REPO_NAME IMAGE_TAG; docker tag football_clubs:latest $$REPO_NAME/football_clubs:$$IMAGE_TAG
 
-# Work with Pycharm make plugin
+# Login docker registry
 docker_login:
 				echo Input Docker_REPO_Username and Docker_Repo_Password.
 				echo Example: \"docker_user docker_password\"
 				read REPO_USER REPO_PASSWORD; docker login -u $$REPO_USER -p $$REPO_PASSWORD
 
-# Work with Pycharm make plugin
+# Push docker image to registry (dockerhub)
 docker_push:
 				echo Input Repository_name and image_tag.
 				echo Example: \"repo_name 1.0.0\"
 				read REPO_NAME IMAGE_TAG; docker push $$REPO_NAME/football_clubs:$$IMAGE_TAG
 
-# Work with Pycharm make plugin
+# Delete docker image
 docker_rmi:
 				echo Input Repository_name and image_tag.
 				echo Example: \"repo_name 1.0.0\"
 				read REPO_NAME IMAGE_TAG; docker rmi $$REPO_NAME/football_clubs:$$IMAGE_TAG
 
-# Work with Pycharm make plugin
+# Pull docker image from Registry (dockerhub)
 docker_pull:
 				echo Input Repository_name and image_tag.
 				echo Example: \"repo_name 1.0.0\"
 				read REPO_NAME IMAGE_TAG; docker pull $$REPO_NAME/football_clubs:$$IMAGE_TAG
 
-# Work with Pycharm make plugin
+# Get docker images with application
 docker_list_images:
 				docker images | grep football_clubs
 
-# Work with Pycharm make plugin
+# Docker compose build image with application
 docker_compose_build:
 				docker-compose build
 
-# Work with Pycharm make plugin
+# Docker compose build image with application and run container
 docker_compose_up: docker_compose_build
 				docker-compose up -d football_clubs_app
 
-# Work with Pycharm make plugin
+# Docker compose build image with application and run container with container traefik proxy
 docker_compose_up_with_traefik_proxy: docker_compose_build
 				docker-compose up -d football_clubs_app traefik_proxy
 
-# Work with Pycharm make plugin
+# Docker compose stop and delete containers
 docker_compose_down:
 				docker-compose down --remove-orphans
 
-# Work with Pycharm make plugin
-kubernetes_helm_install:
-				kubectl create ns football-clubs-ns
-				helm upgrade --install football-clubs deploy/helmchart/football-clubs -n football-clubs-ns
-
-# Work with Pycharm make plugin
-kubernetes_helm_install_proxy: kubernetes_helm_install
-				helm upgrade --install traefik-proxy deploy/helmchart/traefik-proxy -n football-clubs-ns
-
-# Work with Pycharm make plugin
-kubernetes_helm_install_traefik_sidecar:
-				kubectl create ns football-clubs-ns
-				helm upgrade --install football-clubs deploy/helmchart/football-clubs \
- 				-n football-clubs-ns --set traefikSidecarEnabled=true
-
-# Work with Pycharm make plugin
-kubernetes_helm_install_traefik_sidecar_proxy: kubernetes_helm_install_traefik_sidecar
-				helm upgrade --install traefik-proxy deploy/helmchart/traefik-proxy \
-				-n football-clubs-ns --set proxyAppSidecarEnable=true
-
-# Work with Pycharm make plugin
+# Delete kubernetes namespace with application
 kubernetes_helm_uninstall:
 				kubectl delete ns football-clubs-ns
 
+# Helm template sidecar disabled
+helm_template_sidecar_disabled:
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart
 
+# Helm template sidecar disabled with set custom image version
+helm_template_sidecar_disabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG
+
+# Helm upgrade sidecar disabled
+helm_upgrade_sidecar_disabled:
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=false \
+				--set traefik-proxy.proxyAppSidecarEnabled=false \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade sidecar disabled with set custom image version
+helm_upgrade_sidecar_disabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=false \
+				--set traefik-proxy.enabled=false \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade dry-run sidecar disabled
+helm_upgrade_dry_run_sidecar_disabled:
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=false \
+				--set traefik-proxy.enabled=false \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade dry-run sidecar disabled with set custom image version
+helm_upgrade_dry_run_sidecar_disabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=false \
+				--set traefik-proxy.enabled=false \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG \
+				--create-namespace -n football-clubs-ns
+
+# Helm template sidecar enabled
+helm_template_sidecar_enabled:
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.proxyAppSidecarEnabled=true
+
+# Helm upgrade sidecar enabled
+helm_upgrade_sidecar_enabled:
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.proxyAppSidecarEnabled=true \
+				--create-namespace -n football-clubs-ns
+
+# Helm template sidecar enabled with set custom image tag
+helm_template_sidecar_enabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.proxyAppSidecarEnabled=true \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG
+
+# Helm upgrade dry-run sidecar enabled
+helm_upgrade_dry_run_sidecar_enabled:
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.enabled=true \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade sidecar enabled with set custom image tag
+helm_upgrade_sidecar_enabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade dry-run sidecar enabled with set custom image tag
+helm_upgrade_dry_run_sidecar_enabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG \
+				--create-namespace -n football-clubs-ns
+
+# Helm template sidecar disabled (only football-clubs-app)
+helm_template_only_football_clubs_app_sidecar_disabled:
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set traefik-proxy.enabled=false
+
+# Helm template sidecar disabled with set custom image tag (only football-clubs-app)
+helm_template_only_football_clubs_app_sidecar_disabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set traefik-proxy.enabled=false \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG
+
+# Helm upgrade sidecar disabled (only football-clubs-app)
+helm_upgrade_only_football_clubs_app_sidecar_disabled:
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=false \
+				--set traefik-proxy.enabled=false \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade dry-run sidecar disabled (only football-clubs-app)
+helm_upgrade_dry_run_only_football_clubs_app_sidecar_disabled:
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=false \
+				--set traefik-proxy.enabled=false \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade sidecar disabled with set custom image tag (only football-clubs-app)
+helm_upgrade_only_football_clubs_app_sidecar_disabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=false \
+				--set traefik-proxy.enabled=false \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade dry-run sidecar disabled with set custom image tag (only football-clubs-app)
+helm_upgrade_dry_run_only_football_clubs_app_sidecar_disabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=false \
+				--set traefik-proxy.enabled=false \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG \
+				--create-namespace -n football-clubs-ns
+
+# Helm template sidecar enabled (only football-clubs-app)
+helm_template_only_football_clubs_app_sidecar_enabled:
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.enabled=false
+
+# Helm template sidecar enabled with set custom image tag (only football-clubs-app)
+helm_template_only_football_clubs_app_sidecar_enabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.enabled=false \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG
+
+# Helm upgrade sidecar enabled (only football-clubs-app)
+helm_upgrade_only_football_clubs_app_sidecar_enabled:
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.enabled=false \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade dry-run sidecar enabled (only football-clubs-app)
+helm_upgrade_dry_run_only_football_clubs_app_sidecar_enabled:
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.enabled=false \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade sidecar enabled with set custom image tag (only football-clubs-app)
+helm_upgrade_only_football_clubs_app_sidecar_enabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.enabled=false \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade dry-run sidecar disabled with set custom image tag (only football-clubs-app)
+helm_upgrade_dry_run_only_football_clubs_app_sidecar_enabled_with_custom_image_tag:
+				echo Input custom image_tag.
+				echo Example: \"1.0.0\"
+				read IMAGE_TAG; \
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.traefikSidecarEnabled=true \
+				--set traefik-proxy.enabled=false \
+				--set global.footballClubsAppImageVersion=$$IMAGE_TAG \
+				--create-namespace -n football-clubs-ns
+
+# Helm template sidecar disabled (only traefik-proxy)
+helm_template_only_traefik_proxy_sidecar_disabled:
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.enabled=false
+
+# Helm upgrade sidecar disabled (only traefik-proxy)
+helm_upgrade_only_traefik_proxy_sidecar_disabled:
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.enabled=false \
+				--set traefik-proxy.proxyAppSidecarEnabled=false \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade dry-run sidecar disabled (only traefik-proxy)
+helm_upgrade_dry_run_only_traefik_proxy_sidecar_disabled:
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.enabled=false \
+				--set traefik-proxy.proxyAppSidecarEnabled=false \
+				--create-namespace -n football-clubs-ns
+
+# Helm template sidecar enabled (only traefik-proxy)
+helm_template_only_traefik_proxy_sidecar_enabled:
+				helm template football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.enabled=false \
+				--set traefik-proxy.proxyAppSidecarEnabled=true
+
+# Helm upgrade sidecar enabled (only traefik-proxy)
+helm_upgrade_only_traefik_proxy_sidecar_enabled:
+				helm upgrade --install football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.enabled=false \
+				--set traefik-proxy.proxyAppSidecarEnabled=true \
+				--create-namespace -n football-clubs-ns
+
+# Helm upgrade dry-run sidecar enabled (only traefik-proxy)
+helm_upgrade_dry_run_only_traefik_proxy_sidecar_enabled:
+				helm upgrade --install --dry-run --debug football-clubs-chart deploy/helmchart/football-clubs-chart \
+				--set football-clubs-app.enabled=false \
+				--set traefik-proxy.proxyAppSidecarEnabled=true \
+				--create-namespace -n football-clubs-ns

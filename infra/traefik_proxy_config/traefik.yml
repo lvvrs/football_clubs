@@ -1,0 +1,15 @@
+---
+entryPoints:
+  http:
+    address: ":9090"
+
+providers:
+  file:
+    filename: /etc/traefik/routes.yml
+
+api:
+  dashboard: true
+  insecure: true
+
+log:
+  level: INFO

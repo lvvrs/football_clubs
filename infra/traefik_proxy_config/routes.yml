@@ -1,0 +1,21 @@
+---
+http:
+  middlewares:
+    api-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/docs"
+          - "/redoc"
+  routers:
+    app-router:
+      entryPoints:
+        - "http"
+      rule: "PathPrefix(`/`)"
+      service: "service-app"
+      middlewares:
+        - "api-stripprefix"
+  services:
+    service-app:
+      loadBalancer:
+        servers:
+          - url: "http://football_clubs_app:8090"

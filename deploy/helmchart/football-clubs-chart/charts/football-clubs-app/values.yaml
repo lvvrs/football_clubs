@@ -1,0 +1,29 @@
+---
+replicasCount: 2
+
+appImageRegistry: skay1989
+appImageName: football_clubs
+appPort: 8090
+appEnv:
+  UVICORN_PORT: 8090
+appResources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 400m
+    memory: 512Mi
+
+traefikSidecarEnabled: false
+traefikSidecarImageName: traefik
+traefikSidecarPort: 9090
+traefikSidecarDashboardPort: 8080
+traefikSidecarConfigsPath: /etc/traefik
+
+traefikSidecarResources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 400m
+    memory: 512Mi

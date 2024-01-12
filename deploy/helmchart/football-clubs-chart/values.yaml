@@ -1,0 +1,30 @@
+---
+global:
+  footballClubsAppImageVersion: '' # this value may be set with --set global.footballClubsAppImageVersion=<img_tag>
+                                   # example --set global.footballClubsAppImageVersion=1.0.5
+                                   # if this set is '' - tag sets from subchart AppVersion
+                                   # from subchart football-clubs-app Chart.yaml file
+  systemNamespace: football-clubs-ns # this value is set default namespace for install application
+                                     # for install chart to custom namespace - override this value
+                                     # in this file or with argument passing in command line:
+                                     # --set global.systemNamespace=<namespace_name>
+                                     # and set argument -n <namespace_name>
+  traefikProxyImageVersion: v3.0  # this value set image tag for traefik proxy
+                                  # this value may be set with --set global.traefikProxyImageVersion=<img_tag>
+                                  # example --set global.traefikProxyImageVersion=v3.0
+
+football-clubs-app:
+  # Turns on or off subchart football-clubs-app
+  enabled: true # this value may be set with --set football-clubs-app.enabled=<true/false>
+  # Override values in subchart football-clubs-app
+  traefikSidecarEnabled: # this value may be set with --set football-clubs-app.traefikSidecarEnabled=<true/false>
+                         # if in value is '' - current value is false
+
+traefik-proxy:
+  # Turns on or off subchart traefik-proxy
+  enabled: true # this value may be set with --set traefik-proxy.enabled=<true/false>
+  # Override values in subchart traefik-proxy
+  proxyAppSidecarEnabled: # this value may be set with --set traefik-proxy.proxyAppSidecarEnabled=<true/false>
+                         # if in value is '' - current value is false
+
+
