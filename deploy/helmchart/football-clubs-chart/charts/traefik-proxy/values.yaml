@@ -1,0 +1,20 @@
+---
+traefikImageName: traefik
+traefikReplicasCount: 1
+traefikProxyPort: 9090
+traefikProxyDashboardPort: 8080
+traefikConfigPath: /etc/traefik
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 400m
+    memory: 512Mi
+
+proxyAppSrvName: football-clubs-app-svc
+proxyAppNs: football-clubs-ns
+proxyAppSidecarEnabled: false
+proxyAppPort: 8090
+proxyAppWithSidecarPort: 9090

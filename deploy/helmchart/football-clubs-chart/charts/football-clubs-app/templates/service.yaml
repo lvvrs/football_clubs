@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-svc
+  namespace: {{ .Values.global.systemNamespace }}
+  labels:
+    {{- include "football-clubs-app.labels" . | indent 4 }}
+spec:
+  selector:
+    app: {{ .Chart.Name }}
+  ports:
+    {{- if .Values.traefikSidecarEnabled }}
+    - port: {{ .Values.traefikSidecarPort }}
+      targetPort: {{ .Values.traefikSidecarPort }}
+      protocol: TCP
+      name: http
+    - port: {{ .Values.traefikSidecarDashboardPort }}
+      targetPort: {{ .Values.traefikSidecarDashboardPort }}
+      protocol: TCP
+      name: traefik-dashboard
+    {{- else }}
+    - port: {{ .Values.appPort }}
+      targetPort: {{ .Values.appPort }}
+      protocol: TCP
+      name: http
+    {{- end }}
+  type: ClusterIP

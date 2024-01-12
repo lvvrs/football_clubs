@@ -1,118 +1,140 @@
-# Makefile for run application local and run tests
+# Makefile for local development project: football_clubs
 
-# Work only run in virtualenv (make run_app) only in command line
-run_app:
-				uvicorn app.src.main:app --reload
+# Variables for use in Makefile commands
+SLEEP_TIME = 10
+IMAGE_NAME = football_clubs
+CONTAINER_NAME = $(IMAGE_NAME)_app
+APPLICATION_HTTP_PORT = 8080
+DOCKER_REGISTRY = skay1989
+DOCKER_USER = skay1989
+PROXY_CONTAINER_NAME = traefik_proxy
+KUBERNETES_APP_NAMESPACE = football-clubs-ns
+HELM_FOOTBALL_CLUBS_APP_IMAGE_TAG = 0.0.2
+HELM_RELEASE_NAME = football-clubs
+HELM_CHART_PATH = deploy/helmchart
+HELM_CHART_NAME = football-clubs-chart
 
-# Work only run in virtualenv (make unit_tests) only in command line
-unit_tests:
-				pytest
 
-# Work only run in virtualenv (make freeze) only in command line
-freeze:
-				pip freeze > requirements.txt
 
-# Work with Pycharm make plugin
-docker_build:
-				docker build -t football_clubs .
 
-# Work with Pycharm make plugin
-docker_run:
-				docker run -d --name football_clubs_app --env UVICORN_PORT=8080 -p 8080:8080 football_clubs
+#Sleep step for waiting run application in docker container
+sleep_step:
+	sleep $(SLEEP_TIME)
 
-# Work with Pycharm make plugin
-docker_status:
-				docker ps -a
+# Run application football_clubs local with uvicorn server in virtualenv
+run_app_uvicorn:
+	source ./venv/bin/activate && uvicorn app.src.main:app --reload
 
-# Work with Pycharm make plugin
-docker_logs:
-				docker logs football_clubs_app
+# Run unit-test's for application football_clubs with pytest in virtualenv
+unit_tests_app:
+	source ./venv/bin/activate && pytest
 
-# Work with Pycharm make plugin
-docker_down:
-				docker stop football_clubs_app && docker rm football_clubs_app
+# Freeze python packages (dependencies) for application football_clubs in virtualenv
+freeze_dependencies:
+	source ./venv/bin/activate && pip freeze > requirements1.txt
 
-# Work with Pycharm make plugin
-docker_build_run: docker_build docker_run
+# Build docker Image with application football_clubs
+docker_build_app:
+	docker build -t $(IMAGE_NAME) .
 
-# Work with Pycharm make plugin
-docker_status_logs: docker_status docker_logs
+# Run docker container from image with application football_clubs
+docker_run_app:
+	docker run -d --name $(CONTAINER_NAME) --env UVICORN_PORT=$(APPLICATION_HTTP_PORT) \
+	-p $(APPLICATION_HTTP_PORT):$(APPLICATION_HTTP_PORT) $(IMAGE_NAME)
 
-# Work with Pycharm make plugin
-docker_build_run_status: docker_build_run docker_status
+# Build docker image with application football_clubs and run docker container from this image
+docker_build_and_run_app: docker_build_app docker_run_app
 
-# Work with Pycharm make plugin
-docker_tag:
-				echo Input Repository_name and image_tag.
-				echo Example: \"repo_name 1.0.0\"
-				read REPO_NAME IMAGE_TAG; docker tag football_clubs:latest $$REPO_NAME/football_clubs:$$IMAGE_TAG
+# Get list of running containers
+docker_list_running_containers:
+	docker ps -a
 
-# Work with Pycharm make plugin
-docker_login:
-				echo Input Docker_REPO_Username and Docker_Repo_Password.
-				echo Example: \"docker_user docker_password\"
-				read REPO_USER REPO_PASSWORD; docker login -u $$REPO_USER -p $$REPO_PASSWORD
+# Get logs from container with application
+docker_logs_app:
+	docker logs $(CONTAINER_NAME)
 
-# Work with Pycharm make plugin
-docker_push:
-				echo Input Repository_name and image_tag.
-				echo Example: \"repo_name 1.0.0\"
-				read REPO_NAME IMAGE_TAG; docker push $$REPO_NAME/football_clubs:$$IMAGE_TAG
+# Get list of running containers and Get logs from container with application
+docker_list_running_containers_and_logs_app: docker_list_running_containers docker_logs_app
 
-# Work with Pycharm make plugin
+# Build docker image with application football_clubs,
+# run docker container from this image, sleep (variable: SLEEP_TIME) get list of running containers
+# and get logs from container with application
+docker_build_run_status_logs_app: docker_build_and_run_app sleep_step docker_list_running_containers_and_logs_app
+
+# Stop and delete docker container with application football_clubs
+docker_down_app:
+	docker stop $(CONTAINER_NAME) && docker rm $(CONTAINER_NAME)
+
+# Create docker tag for image with application football_clubs
+docker_create_tag:
+	read -p input_image_tag: IMAGE_TAG; docker tag $(IMAGE_NAME):latest $(DOCKER_REGISTRY)/$(IMAGE_NAME):$$IMAGE_TAG
+
+# Login to docker registry (Docker Hub)
+docker_hub_login:
+	read -p input_password_for_registry: PASSWORD; docker login -u $(DOCKER_USER) -p $$PASSWORD
+
+# Push docker image with application football_clubs to registry (Docker Hub)
+docker_hub_push:
+	read -p input_image_tag_for_push IMAGE_TAG; docker push $(DOCKER_REGISTRY)/$(IMAGE_NAME):$$IMAGE_TAG
+
+# Remove docker image with application football_clubs from local registry
 docker_rmi:
-				echo Input Repository_name and image_tag.
-				echo Example: \"repo_name 1.0.0\"
-				read REPO_NAME IMAGE_TAG; docker rmi $$REPO_NAME/football_clubs:$$IMAGE_TAG
+	read -p input_image_tag_for_remove IMAGE_TAG; docker rmi $(DOCKER_REGISTRY)/$(IMAGE_NAME):$$IMAGE_TAG
 
-# Work with Pycharm make plugin
+# Pull docker image with application football_clubs from registry (dockerhub)
 docker_pull:
-				echo Input Repository_name and image_tag.
-				echo Example: \"repo_name 1.0.0\"
-				read REPO_NAME IMAGE_TAG; docker pull $$REPO_NAME/football_clubs:$$IMAGE_TAG
+	read -p input_image_tag_for_pull IMAGE_TAG; docker pull $(DOCKER_REGISTRY)/$(IMAGE_NAME):$$IMAGE_TAG
 
-# Work with Pycharm make plugin
+# List docker images with application football_clubs on local registry
 docker_list_images:
-				docker images | grep football_clubs
+	docker images | grep $(IMAGE_NAME)
 
-# Work with Pycharm make plugin
+# Docker compose build image with application football_clubs
 docker_compose_build:
-				docker-compose build
+	docker-compose build
 
-# Work with Pycharm make plugin
-docker_compose_up: docker_compose_build
-				docker-compose up -d football_clubs_app
+# Docker compose build image with application football_clubs and run docker container from this image
+docker_compose_build_and_run_app: docker_compose_build
+	docker-compose up -d $(CONTAINER_NAME)
 
-# Work with Pycharm make plugin
-docker_compose_up_with_traefik_proxy: docker_compose_build
-				docker-compose up -d football_clubs_app traefik_proxy
+# Docker compose build image with application football_clubs
+# and run docker container from image with container traefik proxy
+docker_compose_build_and_run_app_with_traefik_proxy: docker_compose_build
+	docker-compose up -d $(CONTAINER_NAME) $(PROXY_CONTAINER_NAME)
 
-# Work with Pycharm make plugin
+# Docker compose stop and delete containers
 docker_compose_down:
-				docker-compose down --remove-orphans
+	docker-compose down --remove-orphans
 
-# Work with Pycharm make plugin
-kubernetes_helm_install:
-				kubectl create ns football-clubs-ns
-				helm upgrade --install football-clubs deploy/helmchart/football-clubs -n football-clubs-ns
-
-# Work with Pycharm make plugin
-kubernetes_helm_install_proxy: kubernetes_helm_install
-				helm upgrade --install traefik-proxy deploy/helmchart/traefik-proxy -n football-clubs-ns
-
-# Work with Pycharm make plugin
-kubernetes_helm_install_traefik_sidecar:
-				kubectl create ns football-clubs-ns
-				helm upgrade --install football-clubs deploy/helmchart/football-clubs \
- 				-n football-clubs-ns --set traefikSidecarEnabled=true
-
-# Work with Pycharm make plugin
-kubernetes_helm_install_traefik_sidecar_proxy: kubernetes_helm_install_traefik_sidecar
-				helm upgrade --install traefik-proxy deploy/helmchart/traefik-proxy \
-				-n football-clubs-ns --set proxyAppSidecarEnable=true
-
-# Work with Pycharm make plugin
+# Delete kubernetes namespace with application football_clubs
 kubernetes_helm_uninstall:
-				kubectl delete ns football-clubs-ns
+	kubectl delete ns $(KUBERNETES_APP_NAMESPACE)
+
+# Helm template football-clubs-chart sidecar disabled
+helm_template_sidecar_disabled:
+	helm template $(HELM_RELEASE_NAME) $(HELM_CHART_PATH)/$(HELM_CHART_NAME) \
+        --set global.footballClubsAppImageVersion=$(HELM_FOOTBALL_CLUBS_APP_IMAGE_TAG)
+
+# Helm template football-clubs-chart sidecar enabled
+helm_template_sidecar_enabled:
+	helm template $(HELM_RELEASE_NAME) $(HELM_CHART_PATH)/$(HELM_CHART_NAME) \
+        --set football-clubs-app.traefikSidecarEnabled=true \
+        --set traefik-proxy.proxyAppSidecarEnabled=true \
+        --set global.footballClubsAppImageVersion=$(HELM_FOOTBALL_CLUBS_APP_IMAGE_TAG)
 
 
+# Helm upgrade football-clubs-chart sidecar disabled
+helm_upgrade_sidecar_disabled:
+	helm upgrade --install $(HELM_RELEASE_NAME) $(HELM_CHART_PATH)/$(HELM_CHART_NAME) \
+		--set football-clubs-app.traefikSidecarEnabled=false \
+		--set traefik-proxy.proxyAppSidecarEnabled=false \
+		--set global.footballClubsAppImageVersion=$(HELM_FOOTBALL_CLUBS_APP_IMAGE_TAG) \
+		--create-namespace -n $(KUBERNETES_APP_NAMESPACE)
+
+# Helm upgrade football-clubs-chart sidecar enabled
+helm_upgrade_sidecar_enabled:
+	helm upgrade --install $(HELM_RELEASE_NAME) $(HELM_CHART_PATH)/$(HELM_CHART_NAME) \
+		--set football-clubs-app.traefikSidecarEnabled=true \
+		--set traefik-proxy.proxyAppSidecarEnabled=true \
+		--set global.footballClubsAppImageVersion=$(HELM_FOOTBALL_CLUBS_APP_IMAGE_TAG) \
+		--create-namespace -n $(KUBERNETES_APP_NAMESPACE)

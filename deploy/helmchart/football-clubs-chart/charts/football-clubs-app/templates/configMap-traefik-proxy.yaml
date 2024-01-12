@@ -1,0 +1,47 @@
+---
+{{- if .Values.traefikSidecarEnabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-traefik-proxy-config-cm
+  namespace: {{ .Values.global.systemNamespace }}
+  labels:
+    {{- include "football-clubs-app.labels" . | indent 4 }}
+data:
+  routes.yml: |-
+    http:
+      middlewares:
+        api-stripprefix:
+          stripPrefix:
+            prefixes:
+              - "/docs"
+              - "/redoc"
+      routers:
+        app-router:
+          entryPoints:
+            - "http"
+          rule: "PathPrefix(`/`)"
+          service: "service-app"
+          middlewares:
+            - "api-stripprefix"
+      services:
+        service-app:
+          loadBalancer:
+            servers:
+              - url: "http://127.0.0.1:{{ .Values.appPort }}"
+  traefik.yml: |-
+    entryPoints:
+      http:
+        address: ":{{ .Values.traefikSidecarPort }}"
+
+    providers:
+      file:
+        filename: {{ .Values.traefikSidecarConfigsPath }}/routes.yml
+
+    api:
+      dashboard: true
+      insecure: true
+
+    log:
+      level: INFO
+{{- end }}

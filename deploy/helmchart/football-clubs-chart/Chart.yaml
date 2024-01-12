@@ -1,0 +1,26 @@
+---
+apiVersion: v2
+name: football-clubs-chart
+version: 0.0.1
+dependencies:
+  - name: football-clubs-app
+    version: 0.0.2
+    repository: "file://../charts/football-clubs-app"
+    condition: football-clubs-app.enabled
+  - name: traefik-proxy
+    version: 0.0.1
+    repository: "file://..charts/traefik-proxy"
+    condition: traefik-proxy.enabled
+description: HelmChart for deploy football_clubs application and additional components on Kubernetes
+home: https://github.com/lvvrs/football_clubs
+sources:
+  - https://github.com/lvvrs/football_clubs
+keywords:
+  - python
+  - fastapi
+  - traefik-proxy
+maintainers:
+  - name: Vladimir Leonov
+    email: ronaldo9cor@yandex.ru
+    url: https://github.com/lvvrs
+

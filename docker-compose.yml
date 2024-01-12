@@ -26,8 +26,8 @@ services:
       - "9090:9090"
       - "8080:8080"
     volumes:
-      - ./infra/traefik_proxy_config/traefik.toml:/etc/traefik/traefik.toml
-      - ./infra/traefik_proxy_config/routes.toml:/etc/traefik/routes.toml
+      - ./infra/traefik_proxy_config/traefik.yml:/etc/traefik/traefik.yml
+      - ./infra/traefik_proxy_config/routes.yml:/etc/traefik/routes.yml
 
 networks:
   football_clubs_network:
