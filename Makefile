@@ -122,7 +122,6 @@ helm_template_sidecar_enabled:
         --set traefik-proxy.proxyAppSidecarEnabled=true \
         --set global.footballClubsAppImageVersion=$(HELM_FOOTBALL_CLUBS_APP_IMAGE_TAG)
 
-
 # Helm upgrade football-clubs-chart sidecar disabled
 helm_upgrade_sidecar_disabled:
 	helm upgrade --install $(HELM_RELEASE_NAME) $(HELM_CHART_PATH)/$(HELM_CHART_NAME) \
