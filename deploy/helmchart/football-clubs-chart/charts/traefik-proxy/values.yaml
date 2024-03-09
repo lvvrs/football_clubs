@@ -1,20 +1,22 @@
 ---
-traefikImageName: traefik
-traefikReplicasCount: 1
-traefikProxyPort: 9090
-traefikProxyDashboardPort: 8080
-traefikConfigPath: /etc/traefik
-
+# Image settings
+traefikImageName: traefik # Image name for traefik container
+# Deploy settings
+traefikReplicasCount: 1 # Pod count for traefik container
+traefikProxyPort: 9090  # Container port for traefik container
+traefikProxyDashboardPort: 8080 # Management port for traefik container, access to traefik dashboard
+traefikConfigPath: /etc/traefik # Path to traefik config file
+# Resources for traefik container
 resources:
   requests:
-    cpu: 200m
-    memory: 256Mi
+    cpu: 200m # cpu request
+    memory: 256Mi # memory request
   limits:
-    cpu: 400m
-    memory: 512Mi
-
-proxyAppSrvName: football-clubs-app-svc
-proxyAppNs: football-clubs-ns
-proxyAppSidecarEnabled: false
-proxyAppPort: 8090
-proxyAppWithSidecarPort: 9090
+    cpu: 400m # cpu limit
+    memory: 512Mi # memory limit
+# Proxy deploy settings
+proxyAppSrvName: football-clubs-app-svc # Host (svc name) application for proxy requests
+proxyAppNs: football-clubs-ns # Host (namespace name) application for proxy requests
+proxyAppSidecarEnabled: false # Turns on or of sidecar, change proxy configuration host
+proxyAppPort: 8090 # Container port for proxy requests if sidecar disabled
+proxyAppWithSidecarPort: 9090 # Container port for proxy requests if sidecar enabled

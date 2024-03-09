@@ -253,6 +253,73 @@ Helm upgrade football-clubs-chart sidecar traefik-proxy enabled (only traefik-pr
         --set traefik-proxy.proxyAppSidecarEnabled=true \
         --create-namespace -n [KUBERNETES_APP_NAMESPACE]
 
-## Configuration helm chart:
+## Configuration helm chart
+Configuration parameters sets in files values.yaml or may set's in command line
+
+# Settings for subcharts (deploy/helmchart/football-clubs-chart/values.yaml)
+
+    football-clubs-app:
+      enabled: [true|false]
+      traefikSidecarEnabled: [true|false]
+    traefik-proxy:
+      enabled: [true|false]
+      proxyAppSidecarEnabled: [true|false]
+
+# Global settings (deploy/helmchart/football-clubs-chart/values.yaml)
+    
+    global:
+      footballClubsAppImageVersion: [ImageTag]
+      systemNamespace: [NamespaceName]
+      traefikProxyImageVersion: [ImageTag]
+
+# Football-clubs-app chart settings (deploy/helmchart/football-clubs-chart/football-clubs-app/values.yaml)
+
+    replicasCount: [CountPodsReplicas]
+    appPort: [PortNumber]
+    appResources:
+      requests:
+        cpu: [CpuMillicore]
+        memory: [MemoryVolume]
+      limits:
+        cpu: [CpuMillicore]
+        memory: [MemoryVolume]
+    appImageRegistry: [ImageRegistryName]
+    appImageName: [ImageName]
+    appEnv:
+      UVICORN_PORT: [PortNumber]
+    traefikSidecarImageName: [ImageName]
+    traefikSidecarEnabled: [true|false]
+    traefikSidecarPort: [PortNumber]
+    traefikSidecarDashboardPort: [PortNumber]
+    traefikSidecarConfigsPath: [AbsoluteFileSystemPath]
+    traefikSidecarResources:
+      requests:
+        cpu: [CpuMillicore]
+        memory: [MemoryVolume]
+      limits:
+        cpu: [CpuMillicore]
+        memory: [MemoryVolume]
+
+# Traefik-proxy chart settings (deploy/helmchart/football-clubs-chart/traefik-proxy/values.yaml)
+
+    traefikImageName: [ImageName]
+    traefikReplicasCount: [CountPodsReplicas]
+    traefikProxyPort: [PortNumber]
+    traefikProxyDashboardPort: [PortNumber]
+    traefikConfigPath: [AbsoluteFileSystemPath]
+    resources:
+      requests:
+        cpu: [CpuMillicore]
+        memory: [MemoryVolume]
+      limits:
+        cpu: [CpuMillicore]
+        memory: [MemoryVolume]
+    proxyAppSrvName: [ServiceName]
+    proxyAppNs: [NamespaceName]
+    proxyAppSidecarEnabled: [true|false]
+    proxyAppPort: [PortNumber]
+    proxyAppWithSidecarPort: [PortNumber]
+
+
     
 

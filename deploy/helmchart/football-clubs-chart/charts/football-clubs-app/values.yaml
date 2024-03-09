@@ -1,29 +1,34 @@
 ---
-replicasCount: 2
-
-appImageRegistry: skay1989
-appImageName: football_clubs
-appPort: 8090
-appEnv:
-  UVICORN_PORT: 8090
+# Deploy settings
+replicasCount: 2 # replicas count for application container
+appPort: 8090 # container port for application
+# Resources for application container
 appResources:
   requests:
-    cpu: 200m
-    memory: 256Mi
+    cpu: 200m # cpu request
+    memory: 256Mi # memory request
   limits:
-    cpu: 400m
-    memory: 512Mi
+    cpu: 400m # cpu limit
+    memory: 512Mi # memory limit
+# Image settings
+appImageRegistry: skay1989 # Image registry for application container
+appImageName: football_clubs # Image name for application container
+# App Settings
+appEnv:
+  UVICORN_PORT: 8090 # set application portfor uvicorn server
 
-traefikSidecarEnabled: false
-traefikSidecarImageName: traefik
-traefikSidecarPort: 9090
-traefikSidecarDashboardPort: 8080
-traefikSidecarConfigsPath: /etc/traefik
-
+# Sidecar image settings
+traefikSidecarImageName: traefik # Image name for traefik sidecar container
+# Sidecar deploy settings
+traefikSidecarEnabled: false # Turns on or of traefik sidecar proxy container
+traefikSidecarPort: 9090 # Container port for traefik container
+traefikSidecarDashboardPort: 8080 # Management port for traefik sidecar container, access to traefik dashboard
+traefikSidecarConfigsPath: /etc/traefik # Path to traefik config file
+# Resources for traefik sidecar container
 traefikSidecarResources:
   requests:
-    cpu: 200m
-    memory: 256Mi
+    cpu: 200m # cpu request
+    memory: 256Mi # memory request
   limits:
-    cpu: 400m
-    memory: 512Mi
+    cpu: 400m # cpu limit
+    memory: 512Mi # memory limit
